@@ -1,0 +1,8 @@
+.demo {
+    -fx-background-color: #383838;
+}
+
+.sample-dialog {
+    -fx-max-width: 640;
+    -fx-max-height: 480;
+}
