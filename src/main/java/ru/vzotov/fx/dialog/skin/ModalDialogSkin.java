@@ -1,18 +1,11 @@
 package ru.vzotov.fx.dialog.skin;
 
+import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.Control;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
 import javafx.scene.control.SkinBase;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.material2.Material2OutlinedAL;
 import ru.vzotov.fx.dialog.ModalDialog;
@@ -21,15 +14,9 @@ import ru.vzotov.fx.dialog.Scrim;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import static javafx.scene.layout.Priority.ALWAYS;
 import static ru.vzotov.fx.dialog.DialogMessagesControl.RESOURCE_BUNDLE_NAME;
 import static ru.vzotov.fx.dialog.ModalDialog.ModalDialogEvent.MODAL_DIALOG_CANCEL;
 import static ru.vzotov.fx.dialog.ModalDialog.ModalDialogEvent.MODAL_DIALOG_OK;
-import static ru.vzotov.fx.dialog.ModalDialog.STYLE_DIALOG_BODY;
-import static ru.vzotov.fx.dialog.ModalDialog.STYLE_DIALOG_CONTENT;
-import static ru.vzotov.fx.dialog.ModalDialog.STYLE_DIALOG_TITLE;
-import static ru.vzotov.fx.utils.LayoutUtils.restyled;
-import static ru.vzotov.fx.utils.LayoutUtils.styled;
 
 public class ModalDialogSkin<T extends ModalDialog<?>> extends SkinBase<T> {
 
@@ -64,41 +51,24 @@ public class ModalDialogSkin<T extends ModalDialog<?>> extends SkinBase<T> {
 
     protected Button createConfirmButton() {
         final Button btnOk = new Button(R.getString("dialog.ok"));
-        btnOk.setOnAction(action -> {
-            getSkinnable().fireEvent(new ModalDialog.ModalDialogEvent(MODAL_DIALOG_OK));
-            action.consume();
-        });
+        btnOk.setOnAction(this::okButtonPressed);
         return btnOk;
+    }
+
+    protected void okButtonPressed(ActionEvent action) {
+        getSkinnable().fireEvent(new ModalDialog.ModalDialogEvent(MODAL_DIALOG_OK));
+        action.consume();
     }
 
     protected Button createCancelButton() {
         final Button btnCancel = new Button(R.getString("dialog.cancel"));
-        btnCancel.setOnAction(action -> {
-            getSkinnable().fireEvent(new ModalDialog.ModalDialogEvent(MODAL_DIALOG_CANCEL));
-            action.consume();
-        });
+        btnCancel.setOnAction(this::cancelButtonPressed);
         return btnCancel;
     }
 
-    protected void build(String title, Control closeButton, Region content, ButtonBar buttons, String... dialogClasses) {
-        final StackPane root = styled(restyled(new StackPane(), STYLE_DIALOG_CONTENT), dialogClasses);
-
-        final Label lblDialogTitle = new Label(title, closeButton);
-
-        final Region spacer = new Region();
-        final HBox titleBox = styled(new HBox(lblDialogTitle, spacer), STYLE_DIALOG_TITLE);
-        HBox.setHgrow(lblDialogTitle, ALWAYS);
-        HBox.setHgrow(spacer, ALWAYS);
-
-        final VBox box = styled(new VBox(titleBox, content), STYLE_DIALOG_BODY);
-        if (buttons != null) {
-            box.getChildren().add(buttons);
-        }
-        box.setFillWidth(true);
-        VBox.setVgrow(content, Priority.ALWAYS);
-        root.getChildren().addAll(box);
-
-        getChildren().add(root);
+    protected void cancelButtonPressed(ActionEvent action) {
+        getSkinnable().fireEvent(new ModalDialog.ModalDialogEvent(MODAL_DIALOG_CANCEL));
+        action.consume();
     }
 
     @Override

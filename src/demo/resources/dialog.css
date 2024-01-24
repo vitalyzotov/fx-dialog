@@ -2,7 +2,7 @@
     -fx-background-color: #383838;
 }
 
-.sample-dialog {
+.sample-dialog .dialog-content {
     -fx-max-width: 640;
     -fx-max-height: 480;
 }

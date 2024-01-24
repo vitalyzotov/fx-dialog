@@ -8,6 +8,7 @@ public class PaneDialogManager implements ModalDialogManager {
 
     public PaneDialogManager(StackPane container) {
         this.container = container;
+        this.container.getChildren().addListener(new ModalityHelper());
     }
 
     @Override

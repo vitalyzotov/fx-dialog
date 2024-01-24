@@ -10,10 +10,12 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static ru.vzotov.fx.dialog.ModalDialog.STYLE_DIALOG_BODY;
 import static ru.vzotov.fx.dialog.ModalDialog.STYLE_DIALOG_CONTENT;
 import static ru.vzotov.fx.dialog.ModalDialog.STYLE_DIALOG_TITLE;
 import static ru.vzotov.fx.utils.LayoutUtils.hgrow;
@@ -31,6 +33,7 @@ public class DialogSkinBuilder {
         private TitleDslBuilder title;
         private BodyDslBuilder body;
         private ButtonsDslBuilder footer;
+        private String style;
 
         @Override
         public TitleDsl title(Region title) {
@@ -48,6 +51,12 @@ public class DialogSkinBuilder {
         }
 
         @Override
+        public DialogDsl style(String style) {
+            this.style = style;
+            return this;
+        }
+
+        @Override
         public Node build() {
             final List<Region> parts = Stream.<Optional<Region>>builder()
                     .add(Optional.ofNullable(title).map(PartDslBuilder::build))
@@ -60,7 +69,8 @@ public class DialogSkinBuilder {
             final VBox box = new VBox();
             box.getChildren().setAll(parts);
             box.setFillWidth(true);
-            return styled(STYLE_DIALOG_CONTENT, new StackPane(box));
+            return styled(new StackPane(box), style == null ? Collections.singleton(STYLE_DIALOG_CONTENT) :
+                    List.of(STYLE_DIALOG_CONTENT, style));
         }
     }
 
@@ -75,7 +85,7 @@ public class DialogSkinBuilder {
 
         @Override
         public Region build() {
-            return vgrow(Priority.ALWAYS, body);
+            return vgrow(Priority.ALWAYS, styled(STYLE_DIALOG_BODY, body));
         }
     }
 
@@ -149,6 +159,8 @@ public class DialogSkinBuilder {
         BodyDsl body(Region body);
 
         ButtonsDsl footer();
+
+        DialogDsl style(String style);
 
         Node build();
     }
